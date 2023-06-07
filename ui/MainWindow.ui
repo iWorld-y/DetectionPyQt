@@ -150,6 +150,11 @@
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
             <widget class="QRadioButton" name="YOLOv5">
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>YOLOv5</string>
              </property>
@@ -157,30 +162,13 @@
            </item>
            <item>
             <widget class="QRadioButton" name="YOLOv6">
-             <property name="text">
-              <string>YOLOv6</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="open_weight">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
              <property name="font">
               <font>
-               <family>Adobe Devanagari</family>
-               <pointsize>10</pointsize>
+               <pointsize>15</pointsize>
               </font>
              </property>
-             <property name="cursor">
-              <cursorShape>ArrowCursor</cursorShape>
-             </property>
              <property name="text">
-              <string>选择权重</string>
+              <string>YOLOv6</string>
              </property>
             </widget>
            </item>
@@ -254,6 +242,37 @@
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QLabel" name="current_onnx">
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>YOLOv5</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="FPS">
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
              <item>
               <widget class="QTextBrowser" name="detect_result_text"/>
              </item>

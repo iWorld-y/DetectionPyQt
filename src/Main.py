@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-
+import time
 import cv2
 import onnxruntime
 from PyQt5.QtCore import QTimer
@@ -28,9 +28,14 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         self.init_clicked()
         self.init_slider()
 
+        # 默认权重为 yolov5
+        self.main_ui.YOLOv5.setChecked(True)
+        self.__init_detect_v5__()
+        self.choice_onnx()
+
     def choice_onnx(self):
-        self.main_ui.YOLOv5.hitButton(self.__init_detect_v5__)
-        self.main_ui.YOLOv6.hitButton(self.__init_detect_v6__)
+        self.main_ui.YOLOv5.toggled.connect(self.__init_detect_v5__)
+        self.main_ui.YOLOv6.toggled.connect(self.__init_detect_v6__)
 
     def init_slider(self):
         # IoU
@@ -56,8 +61,6 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         self.conf = value / 100
 
     def init_clicked(self):
-        # 打开权重
-        self.main_ui.open_weight.clicked.connect(self.open_weight)
         # 检测图片
         self.main_ui.detect_image.clicked.connect(self.detect_image)
         # 检测视频
@@ -74,17 +77,21 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 退出
         self.main_ui.quit_button.clicked.connect(QApplication.quit)
 
-    def __init_detect_v5__(self, ONNX_path):
+    def __init_detect_v5__(self):
+        ONNX_path = "../models/v5.onnx"
         if (os.path.isfile(ONNX_path)):
             self.detector = DetectV5(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
+            self.main_ui.current_onnx.setText("YOLOv5")
         else:
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 
-    def __init_detect_v6__(self, ONNX_path):
+    def __init_detect_v6__(self):
+        ONNX_path = "../models/v6.onnx"
         if (os.path.isfile(ONNX_path)):
             self.detector = DetectV6(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
+            self.main_ui.current_onnx.setText("YOLOv6")
         else:
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 
@@ -101,10 +108,10 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         if not self.video_path:
             QtWidgets.QMessageBox.warning(self, "错误", "未选择视频", buttons=QtWidgets.QMessageBox.Ok,
                                           defaultButton=QtWidgets.QMessageBox.Ok)
-            self.main_ui.open_weight.setText(
+            self.main_ui.detect_video.setText(
                 QtCore.QCoreApplication.translate("MainWindow", "选择权重"))
             return
-        self.main_ui.open_weight.setText(
+        self.main_ui.detect_video.setText(
             QtCore.QCoreApplication.translate("MainWindow", f"正在检测:\n{os.path.basename(self.video_path)}"))
         # 读取视频
         self.video_capture = cv2.VideoCapture(self.video_path)
@@ -126,7 +133,10 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
 
         # 预测画面
         try:
+            start_time = time.time()
             origin_stream = self.detector.inference(video_stream, self.conf, self.iou)
+            end_time = time.time()
+            self.main_ui.FPS.setText(f"FPS: {1.0 / (end_time - start_time):.2f}")
             # 矫正颜色
             origin_stream = cv2.cvtColor(origin_stream, cv2.COLOR_BGR2RGB)
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
@@ -146,6 +156,9 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         pixmap_stream = QtGui.QPixmap.fromImage(origin_stream).scaled(self.main_ui.show_label.width(),
                                                                       self.main_ui.show_label.height())
         self.main_ui.show_label.setPixmap(pixmap_stream)
+        # 显示检出物及其分数
+        for ret, sco in zip(self.detector.result, self.detector.score):
+            self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
     def open_camer(self):
         # 打开摄像头
@@ -170,7 +183,10 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
 
         # 预测画面
         try:
+            start_time = time.time()
             origin_stream = self.detector.inference(video_stream, self.conf, self.iou)
+            end_time = time.time()
+            self.main_ui.FPS.setText(f"FPS: {1.0 / (end_time - start_time):.2f}")
             # 矫正颜色
             origin_stream = cv2.cvtColor(origin_stream, cv2.COLOR_BGR2RGB)
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
@@ -190,36 +206,9 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         pixmap_stream = QtGui.QPixmap.fromImage(origin_stream).scaled(self.main_ui.show_label.width(),
                                                                       self.main_ui.show_label.height())
         self.main_ui.show_label.setPixmap(pixmap_stream)
-
-    def open_weight(self):
-        self.weight_path, _ = QFileDialog.getOpenFileName(self.main_ui.open_weight, "选择权重",
-                                                          '/home/eugene/autodl-tmp/weights',
-                                                          "*.onnx")
-        if not self.weight_path:
-            QtWidgets.QMessageBox.warning(self, "错误", "未选择权重", buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            self.main_ui.open_weight.setText(
-                QtCore.QCoreApplication.translate("MainWindow", "选择权重"))
-            return
-
-        weight_name = os.path.basename(self.weight_path)
-        try:  # 尝试加载 ONNX 权重，若报错即权重不可用
-            # self.__init_detect_v5__(self.weight_path)
-            self.__init_detect_v6__(self.weight_path)
-        except ValueError as e:
-            QtWidgets.QMessageBox.warning(self, "错误", "权重不存在",
-                                          buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            logging.error(e)
-            return
-        except Exception as e:
-            QtWidgets.QMessageBox.warning(self, "错误", "权重解析失败\n请检查权重是否正确",
-                                          buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            logging.error(e)
-            return
-        self.main_ui.open_weight.setText(
-            QtCore.QCoreApplication.translate("MainWindow", f"当前权重：\n{weight_name}"))
+        # 显示检出物及其分数
+        for ret, sco in zip(self.detector.result, self.detector.score):
+            self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
     def detect_image(self):
         self.imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片",
@@ -229,18 +218,25 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, "错误", "未选择图片", buttons=QtWidgets.QMessageBox.Ok,
                                           defaultButton=QtWidgets.QMessageBox.Ok)
             return
+        # 清空 FPS 显示
+        self.main_ui.FPS.setText('')
+
         jpg = QtGui.QPixmap(self.imgName).scaled(self.main_ui.origin_image.width(), self.main_ui.origin_image.height())
         self.main_ui.origin_image.setPixmap(jpg)
         try:
             image = self.detector.inference(cv2.imread(self.imgName), self.conf, self.iou)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         except Exception as e:
+            image = cv2.cvtColor(cv2.imread(self.imgName), cv2.COLOR_BGR2RGB)
             logging.error(e)
         image = QImage(image[:], image.shape[1], image.shape[0], image.shape[1] * 3,
                        QImage.Format_RGB888)
         pixmap_imgSrc = QtGui.QPixmap.fromImage(image).scaled(self.main_ui.show_label.width(),
                                                               self.main_ui.show_label.height())
         self.main_ui.show_label.setPixmap(pixmap_imgSrc)
+        # 显示检出物及其分数
+        for ret, sco in zip(self.detector.result, self.detector.score):
+            self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
 
 if __name__ == '__main__':

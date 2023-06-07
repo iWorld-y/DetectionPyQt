@@ -1,3 +1,4 @@
+import logging
 import time
 import cv2
 import numpy as np
@@ -7,10 +8,6 @@ from .utils import xywh2xyxy, nms, draw_detections
 
 
 class DetectV6:
-
-    # def __init__(self, path):
-    #     # Initialize model
-    #     self.initialize_model(path)
     def __init__(self, onnx_session, classes):
         self.onnx_session: onnxruntime.InferenceSession = onnx_session
         self.classes = classes
@@ -22,13 +19,6 @@ class DetectV6:
         self.get_input_details()
         self.get_output_details()
 
-    def initialize_model(self, path):
-        self.onnx_session = onnxruntime.InferenceSession(path, providers=['CUDAExecutionProvider',
-                                                                          'CPUExecutionProvider'])
-        # Get model info
-        self.get_input_details()
-        self.get_output_details()
-
     def detect_objects(self, image):
         input_tensor = self.prepare_input(image)
 
@@ -36,9 +26,9 @@ class DetectV6:
         output = self.__inference__(input_tensor)
 
         # Process output data
-        self.boxes, self.scores, self.classes = self.process_output(output)
+        self.boxes, self.scores, self.class_ids = self.process_output(output)
 
-        return self.boxes, self.scores, self.classes
+        return self.boxes, self.scores, self.class_ids
 
     def prepare_input(self, image):
         self.img_height, self.img_width = image.shape[:2]
@@ -108,8 +98,14 @@ class DetectV6:
         self.conf_threshold = conf_thres
         self.iou_threshold = iou_thres
         self.detect_objects(image)
+        # 记录检出物及其分数
+        self.result = []
+        self.score = []
+        for ret, sco in zip(self.class_ids, self.scores):
+            self.result.append(self.classes[ret])
+            self.score.append(sco)
         return draw_detections(image, self.boxes, self.scores,
-                               self.classes, mask_alpha=0)
+                               self.class_ids)
 
     def get_input_details(self):
         model_inputs = self.onnx_session.get_inputs()

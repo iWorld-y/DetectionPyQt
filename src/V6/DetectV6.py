@@ -46,10 +46,7 @@ class DetectV6:
         return input_tensor
 
     def __inference__(self, input_tensor):
-        start = time.perf_counter()
         outputs = self.onnx_session.run(self.output_names, {self.input_names[0]: input_tensor})[0]
-
-        # print(f"__inference__ time: {(time.perf_counter() - start)*1000:.2f} ms")
         return outputs
 
     def process_output(self, output):
@@ -118,18 +115,3 @@ class DetectV6:
     def get_output_details(self):
         model_outputs = self.onnx_session.get_outputs()
         self.output_names = [model_outputs[i].name for i in range(len(model_outputs))]
-
-
-if __name__ == '__main__':
-    from PIL import Image
-
-    ONNX_path = "../../models/v6.onnx"
-    classes = ["short sleeve top", "long sleeve top", "short sleeve outwear", "long sleeve outwear", "vest", "sling",
-               "shorts", "trousers", "skirt", "short sleeve dress", "long sleeve dress", "vest dress",
-               "sling dress"]
-    DetectV6_detector = DetectV6(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']), classes)
-
-    img = cv2.imread(r"/home/eugene/autodl-tmp/test/1.jpg")
-    # Draw detections
-    combined_img = DetectV6_detector.inference(img, conf_thres=0.3, iou_thres=0.5)
-    Image.fromarray(combined_img).show()

@@ -173,6 +173,18 @@
             </widget>
            </item>
            <item>
+            <widget class="QRadioButton" name="YOLOv8">
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>YOLOv8</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="detect_image">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">

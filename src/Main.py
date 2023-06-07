@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from MainWindow import *
 from DetectV5 import DetectV5
 from src.V6.DetectV6 import DetectV6
+from src.V8.DetectV8 import DetectV8
 
 
 class Gene_Window(QMainWindow, Ui_MainWindow):
@@ -36,6 +37,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
     def choice_onnx(self):
         self.main_ui.YOLOv5.toggled.connect(self.__init_detect_v5__)
         self.main_ui.YOLOv6.toggled.connect(self.__init_detect_v6__)
+        self.main_ui.YOLOv8.toggled.connect(self.__init_detect_v8__)
 
     def init_slider(self):
         # IoU
@@ -92,6 +94,15 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             self.detector = DetectV6(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
             self.main_ui.current_onnx.setText("YOLOv6")
+        else:
+            raise ValueError(f"ONNX model file not found at {ONNX_path}")
+
+    def __init_detect_v8__(self):
+        ONNX_path = "../models/v8.onnx"
+        if (os.path.isfile(ONNX_path)):
+            self.detector = DetectV8(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
+                                     classes=self.CLASSES)
+            self.main_ui.current_onnx.setText("YOLOv8")
         else:
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 

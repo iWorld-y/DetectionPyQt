@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\ui\MainWindow.ui'
+# Form implementation generated from reading ui file 'ui/MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -21,7 +21,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(".\\ui\\icons8-ai-80.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("ui/icons8-ai-80.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
@@ -97,6 +97,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.YOLOv5 = QtWidgets.QRadioButton(self.groupBox_2)
+        self.YOLOv5.setObjectName("YOLOv5")
+        self.verticalLayout.addWidget(self.YOLOv5)
+        self.YOLOv6 = QtWidgets.QRadioButton(self.groupBox_2)
+        self.YOLOv6.setObjectName("YOLOv6")
+        self.verticalLayout.addWidget(self.YOLOv6)
         self.open_weight = QtWidgets.QPushButton(self.groupBox_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -225,6 +231,8 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "功能选择"))
         self.label_3.setText(_translate("MainWindow", "检测结果"))
         self.label_4.setText(_translate("MainWindow", "检测信息"))
+        self.YOLOv5.setText(_translate("MainWindow", "YOLOv5"))
+        self.YOLOv6.setText(_translate("MainWindow", "YOLOv6"))
         self.open_weight.setText(_translate("MainWindow", "选择权重"))
         self.detect_image.setText(_translate("MainWindow", "图片检测"))
         self.detect_video.setText(_translate("MainWindow", "视频检测"))

@@ -149,6 +149,20 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
+            <widget class="QRadioButton" name="YOLOv5">
+             <property name="text">
+              <string>YOLOv5</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="YOLOv6">
+             <property name="text">
+              <string>YOLOv6</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="open_weight">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">

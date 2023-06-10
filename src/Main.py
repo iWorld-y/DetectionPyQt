@@ -3,15 +3,11 @@ import os
 import sys
 import time
 import cv2
-import onnxruntime
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
 from src.ui.MainWindow import *
-from src.YOLO_ONNX_Detection.DetectV5 import DetectV5
-from src.YOLO_ONNX_Detection.DetectV6 import DetectV6
-from src.YOLO_ONNX_Detection.DetectV8 import DetectV8
 from src.YOLO_ONNX_Detection.GetDetector import GetDetector
 
 
@@ -49,17 +45,17 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # Conf
         self.main_ui.Conf_label.setText(f"Conf:\t{self.conf:.2f}")
         self.main_ui.Conf_Slider.setMinimum(1)
-        self.main_ui.Conf_Slider.setMaximum(100)
+        self.main_ui.Conf_Slider.setMaximum(99)
         self.main_ui.Conf_Slider.setValue(int(self.conf * 100))
         self.main_ui.Conf_Slider.valueChanged[int].connect(self.set_conf)
 
     def set_iou(self, value):
-        self.main_ui.IoU_label.setText(f"IoU:\t{self.iou:.2f}")
-        self.iou = value / 100
+        self.iou = round(value / 100, 2)
+        self.main_ui.IoU_label.setText(f"IoU:\t{self.iou}")
 
     def set_conf(self, value):
-        self.main_ui.Conf_label.setText(f"Conf:\t{self.conf:.2f}")
-        self.conf = value / 100
+        self.conf = round(value / 100, 2)
+        self.main_ui.Conf_label.setText(f"Conf:\t{self.conf}")
 
     def init_clicked(self):
         # 检测图片
@@ -86,7 +82,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
                                               defaultButton=QtWidgets.QMessageBox.Ok)
                 raise ValueError(f"ONNX model file not found at {ONNX_path}")
         # 将所有权重加载到内存中
-        self.detectors = GetDetector(self.CLASSES, "../models").get_detectors()
+        self.detectors_arr = GetDetector(self.CLASSES, "../models").get_detectors()
         # 默认权重为 yolov5
         self.main_ui.YOLOv5.setChecked(True)
         self.get_detect_v5()
@@ -96,19 +92,19 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             # 避免取消选中时也被调用
             return
         logging.info("当前权重：v5")
-        self.detector = self.detectors[0]
+        self.detector = self.detectors_arr[0]
 
     def get_detect_v6(self):
         if (not self.main_ui.YOLOv6.isChecked()):
             return
         logging.info("当前权重：v6")
-        self.detector = self.detectors[1]
+        self.detector = self.detectors_arr[1]
 
     def get_detect_v8(self):
         if (not self.main_ui.YOLOv8.isChecked()):
             return
         logging.info("当前权重：v8")
-        self.detector = self.detectors[2]
+        self.detector = self.detectors_arr[2]
 
     def toggle_pause(self):
         # 处理暂停信号
@@ -124,15 +120,21 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             QtWidgets.QMessageBox.warning(self, "错误", "未选择视频", buttons=QtWidgets.QMessageBox.Ok,
                                           defaultButton=QtWidgets.QMessageBox.Ok)
             self.main_ui.detect_video.setText(
-                QtCore.QCoreApplication.translate("MainWindow", "选择权重"))
+                QtCore.QCoreApplication.translate("MainWindow", "选择视频"))
             return
         self.main_ui.detect_video.setText(
             QtCore.QCoreApplication.translate("MainWindow", f"正在检测:\n{os.path.basename(self.video_path)}"))
+        # 检查当前是否在播放视频
+        try:
+            if (self.video_capture.isOpened()):
+                self.video_capture.release()
+        except Exception as e:
+            logging.error(e)
         # 读取视频
         self.video_capture = cv2.VideoCapture(self.video_path)
         _, image = self.video_capture.read()
-        cv2.imwrite("test.jpg", image)
         self.timer = QTimer()
+        self.video_name = os.path.basename(self.video_path)
         self.timer.timeout.connect(self.detect_video)
         self.timer.start(50)
 
@@ -176,8 +178,16 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
     def open_camer(self):
+        self.main_ui.detect_video.setText(
+            QtCore.QCoreApplication.translate("MainWindow", "视频检测"))
+        # 检查当前是否在播放视频
+        try:
+            if (self.video_capture.isOpened()):
+                self.video_capture.release()
+        except Exception as e:
+            logging.error(e)
         # 打开摄像头
-        self.video_capture = cv2.VideoCapture(0)
+        self.video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.timer = QTimer()
         self.timer.timeout.connect(self.detect_camer)
         self.timer.start(50)

@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import cv2
+import numpy as np
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
@@ -51,11 +52,11 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
 
     def set_iou(self, value):
         self.iou = round(value / 100, 2)
-        self.main_ui.IoU_label.setText(f"IoU:\t{self.iou}")
+        self.main_ui.IoU_label.setText(f"IoU:\t{self.iou:.2f}")
 
     def set_conf(self, value):
         self.conf = round(value / 100, 2)
-        self.main_ui.Conf_label.setText(f"Conf:\t{self.conf}")
+        self.main_ui.Conf_label.setText(f"Conf:\t{self.conf:.2f}")
 
     def init_clicked(self):
         # 检测图片
@@ -146,10 +147,10 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 如果处于暂停状态，直接返回
         if self.paused_camer:
             return
-        if (self.current_frame >= self.total_frames):
-            # 若当前总帧数大于视频总帧数即播放完毕
-            self.video_capture.release()
+        if (self.current_frame + 1 >= self.total_frames):
+            # 若当前总帧数大于等于视频总帧数即播放完毕
             self.timer.stop()
+            self.video_capture.release()
             return
         # 获取一帧画面
         # read()：读取视频流中的一帧，返回两个值，第一个值是一个布尔值，表示是否成功读取了一帧；第二个值是一个 NumPy 数组，表示读取的图像数据。
@@ -161,32 +162,56 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 预测画面
         try:
             start_time = time.time()
-            origin_stream = self.detector.inference(video_stream, self.conf, self.iou)
+            result_stream = self.detector.inference(video_stream, self.conf, self.iou)
             end_time = time.time()
             self.main_ui.FPS.setText(f"FPS: {1.0 / (end_time - start_time):.2f}")
             # 矫正颜色
-            origin_stream = cv2.cvtColor(origin_stream, cv2.COLOR_BGR2RGB)
+            result_stream = cv2.cvtColor(result_stream, cv2.COLOR_BGR2RGB)
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
-            self.current_frame += 1
         except Exception as e:
             logging.warning("未发现衣物")
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
-            origin_stream = video_stream
-
+            result_stream = video_stream
+        self.current_frame += 1
         # 创建 QImage 对象，将原画面显示出来
-        qimage = QImage(video_stream, width, height, channel * width, QImage.Format_RGB888)
+        video_stream = self.resize_and_fill(video_stream, self.main_ui.origin_image.width(),
+                                            self.main_ui.origin_image.height())
+        qimage = QImage(video_stream, video_stream.shape[1], video_stream.shape[0],
+                        video_stream.shape[1] * 3, QImage.Format_RGB888)
         pixmap = QtGui.QPixmap(qimage).scaled(self.main_ui.origin_image.width(),
                                               self.main_ui.origin_image.height())
         self.main_ui.origin_image.setPixmap(pixmap)
         # 将检查结果显示出来
-        origin_stream = QImage(origin_stream[:], origin_stream.shape[1], origin_stream.shape[0],
-                               origin_stream.shape[1] * 3, QImage.Format_RGB888)
-        pixmap_stream = QtGui.QPixmap.fromImage(origin_stream).scaled(self.main_ui.show_label.width(),
+        result_stream = self.resize_and_fill(result_stream, self.main_ui.show_label.width(),
+                                             self.main_ui.show_label.height())
+        result_stream = QImage(result_stream[:], result_stream.shape[1], result_stream.shape[0],
+                               result_stream.shape[1] * 3, QImage.Format_RGB888)
+        pixmap_stream = QtGui.QPixmap.fromImage(result_stream).scaled(self.main_ui.show_label.width(),
                                                                       self.main_ui.show_label.height())
         self.main_ui.show_label.setPixmap(pixmap_stream)
         # 显示检出物及其分数
         for ret, sco in zip(self.detector.result, self.detector.score):
             self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
+
+    @staticmethod
+    def resize_and_fill(image, container_width, container_height):
+        container_width *= 2
+        container_height *= 2
+        # 获取原始图像尺寸
+        height, width, channels = image.shape
+        # 计算等比缩放后的新尺寸
+        scale_ratio = min(container_width / width, container_height / height)
+        new_width = int(width * scale_ratio)
+        new_height = int(height * scale_ratio)
+        # 创建一个白色背景图像
+        background = np.zeros((container_height, container_width, channels), dtype=np.uint8)
+        background.fill(240)
+        # 计算缩放后图像的位置，并将其复制到新图像中央
+        x_offset = (container_width - new_width) // 2
+        y_offset = (container_height - new_height) // 2
+        resized_image = cv2.resize(image, (new_width, new_height))
+        background[y_offset:y_offset + new_height, x_offset:x_offset + new_width] = resized_image
+        return background
 
     def open_camer(self):
         # 检查当前是否在播放视频
@@ -216,9 +241,6 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 避免视频切换照片卡死
         if (not ret): return
         video_stream = cv2.flip(video_stream, 1)
-
-        height, width, channel = video_stream.shape
-
         # 预测画面
         try:
             start_time = time.time()
@@ -233,12 +255,17 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
             origin_stream = video_stream
 
-        # 创建 QImage 对象，并从摄像头画面中获取像素数据
-        qimage = QImage(video_stream, width, height, channel * width, QImage.Format_RGB888)
+        # 创建 QImage 对象，将原画面显示出来
+        video_stream = self.resize_and_fill(video_stream, self.main_ui.origin_image.width(),
+                                            self.main_ui.origin_image.height())
+        qimage = QImage(video_stream, video_stream.shape[1], video_stream.shape[0],
+                        video_stream.shape[1] * 3, QImage.Format_RGB888)
         pixmap = QtGui.QPixmap(qimage).scaled(self.main_ui.origin_image.width(),
                                               self.main_ui.origin_image.height())
         self.main_ui.origin_image.setPixmap(pixmap)
         # 显示检测结果
+        origin_stream = self.resize_and_fill(origin_stream, self.main_ui.origin_image.width(),
+                                             self.main_ui.origin_image.height())
         origin_stream = QImage(origin_stream[:], origin_stream.shape[1], origin_stream.shape[0],
                                origin_stream.shape[1] * 3, QImage.Format_RGB888)
         pixmap_stream = QtGui.QPixmap.fromImage(origin_stream).scaled(self.main_ui.show_label.width(),
@@ -268,7 +295,14 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 清空 FPS 显示
         self.main_ui.FPS.setText('')
 
-        jpg = QtGui.QPixmap(self.imgName).scaled(self.main_ui.origin_image.width(), self.main_ui.origin_image.height())
+        image = self.resize_and_fill(cv2.cvtColor(cv2.imread(self.imgName), cv2.COLOR_BGR2RGB),
+                                     self.main_ui.origin_image.width(),
+                                     self.main_ui.origin_image.height())
+
+        image = QImage(image, image.shape[1], image.shape[0],
+                       image.shape[1] * 3, QImage.Format_RGB888)
+        jpg = QtGui.QPixmap.fromImage(image).scaled(self.main_ui.origin_image.width(),
+                                                    self.main_ui.origin_image.height())
         self.main_ui.origin_image.setPixmap(jpg)
         try:
             image = self.detector.inference(cv2.imread(self.imgName), self.conf, self.iou)
@@ -276,6 +310,9 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         except Exception as e:
             image = cv2.cvtColor(cv2.imread(self.imgName), cv2.COLOR_BGR2RGB)
             logging.error(e)
+
+        image = self.resize_and_fill(image, self.main_ui.origin_image.width(),
+                                     self.main_ui.origin_image.height())
         image = QImage(image[:], image.shape[1], image.shape[0], image.shape[1] * 3,
                        QImage.Format_RGB888)
         pixmap_imgSrc = QtGui.QPixmap.fromImage(image).scaled(self.main_ui.show_label.width(),

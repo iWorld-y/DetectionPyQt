@@ -8,10 +8,11 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
-from MainWindow import *
+from src.ui.MainWindow import *
 from src.YOLO_ONNX_Detection.DetectV5 import DetectV5
 from src.YOLO_ONNX_Detection.DetectV6 import DetectV6
 from src.YOLO_ONNX_Detection.DetectV8 import DetectV8
+from src.YOLO_ONNX_Detection.GetDetector import GetDetector
 
 
 class Gene_Window(QMainWindow, Ui_MainWindow):
@@ -29,15 +30,13 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         self.init_clicked()
         self.init_slider()
 
-        # 默认权重为 yolov5
-        self.main_ui.YOLOv5.setChecked(True)
-        self.__init_detect_v5__()
+        self.init_onnx()
         self.choice_onnx()
 
     def choice_onnx(self):
-        self.main_ui.YOLOv5.toggled.connect(self.__init_detect_v5__)
-        self.main_ui.YOLOv6.toggled.connect(self.__init_detect_v6__)
-        self.main_ui.YOLOv8.toggled.connect(self.__init_detect_v8__)
+        self.main_ui.YOLOv5.toggled.connect(self.get_detect_v5)
+        self.main_ui.YOLOv6.toggled.connect(self.get_detect_v6)
+        self.main_ui.YOLOv8.toggled.connect(self.get_detect_v8)
 
     def init_slider(self):
         # IoU
@@ -77,53 +76,39 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 退出
         self.main_ui.quit_button.clicked.connect(QApplication.quit)
 
-    def __init_detect_v5__(self):
+    def init_onnx(self):
+        # 初始化模型
+        ONNX_path = "../models/"
+        for version in [5, 6, 8]:
+            if (not os.path.isfile(os.path.join(ONNX_path, f"v{version}.onnx"))):
+                QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
+                                              buttons=QtWidgets.QMessageBox.Ok,
+                                              defaultButton=QtWidgets.QMessageBox.Ok)
+                raise ValueError(f"ONNX model file not found at {ONNX_path}")
+        # 将所有权重加载到内存中
+        self.detectors = GetDetector(self.CLASSES, "../models").get_detectors()
+        # 默认权重为 yolov5
+        self.main_ui.YOLOv5.setChecked(True)
+        self.get_detect_v5()
+
+    def get_detect_v5(self):
         if (not self.main_ui.YOLOv5.isChecked()):
-            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
+            # 避免取消选中时也被调用
             return
-        ONNX_path = "../models/v5.onnx"
-        if (os.path.isfile(ONNX_path)):
-            self.detector = DetectV5(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
-                                     classes=self.CLASSES)
-            self.main_ui.current_onnx.setText("YOLOv5")
-            logging.info("当前权重：v5.onnx")
-        else:
-            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
-                                          buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            raise ValueError(f"ONNX model file not found at {ONNX_path}")
+        logging.info("当前权重：v5")
+        self.detector = self.detectors[0]
 
-    def __init_detect_v6__(self):
+    def get_detect_v6(self):
         if (not self.main_ui.YOLOv6.isChecked()):
-            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
             return
-        ONNX_path = "../models/v6.onnx"
-        if (os.path.isfile(ONNX_path)):
-            self.detector = DetectV6(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
-                                     classes=self.CLASSES)
-            self.main_ui.current_onnx.setText("YOLOv6")
-            logging.info("当前权重：v6.onnx")
-        else:
-            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
-                                          buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            raise ValueError(f"ONNX model file not found at {ONNX_path}")
+        logging.info("当前权重：v6")
+        self.detector = self.detectors[1]
 
-    def __init_detect_v8__(self):
+    def get_detect_v8(self):
         if (not self.main_ui.YOLOv8.isChecked()):
-            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
             return
-        ONNX_path = "../models/v8.onnx"
-        if (os.path.isfile(ONNX_path)):
-            self.detector = DetectV8(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
-                                     classes=self.CLASSES)
-            self.main_ui.current_onnx.setText("YOLOv8")
-            logging.info("当前权重：v8.onnx")
-        else:
-            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
-                                          buttons=QtWidgets.QMessageBox.Ok,
-                                          defaultButton=QtWidgets.QMessageBox.Ok)
-            raise ValueError(f"ONNX model file not found at {ONNX_path}")
+        logging.info("当前权重：v8")
+        self.detector = self.detectors[2]
 
     def toggle_pause(self):
         # 处理暂停信号

@@ -1,381 +1,384 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>951</width>
-    <height>636</height>
-   </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
-  <property name="windowTitle">
-   <string>基于深度学习的多标签服饰检测系统</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>icons8-ai-80.png</normaloff>icons8-ai-80.png</iconset>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
-    <item>
-     <widget class="QLabel" name="label_5">
-      <property name="font">
-       <font>
-        <family>Adobe Devanagari</family>
-        <pointsize>14</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>大数据193姜镗宇</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string>操作区</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,4,1">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
+    <class>MainWindow</class>
+    <widget class="QMainWindow" name="MainWindow">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>951</width>
+                <height>636</height>
+            </rect>
+        </property>
+        <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>1677215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Adobe Devanagari</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>功能选择</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>1677215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Adobe Devanagari</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>检测结果</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>1677215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Adobe Devanagari</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>检测信息</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,11">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QRadioButton" name="YOLOv5">
-             <property name="font">
-              <font>
-               <pointsize>15</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>YOLOv5</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="YOLOv6">
-             <property name="font">
-              <font>
-               <pointsize>15</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>YOLOv6</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="YOLOv8">
-             <property name="font">
-              <font>
-               <pointsize>15</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>YOLOv8</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="detect_image">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Adobe Devanagari</family>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>图片检测</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="detect_video">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Adobe Devanagari</family>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>视频检测</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="detect_camer">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Adobe Devanagari</family>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>摄像头检测</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,0">
-           <item>
-            <widget class="QLabel" name="show_label">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_6">
-               <item>
-                <widget class="QLabel" name="current_onnx">
-                 <property name="font">
-                  <font>
-                   <pointsize>15</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>YOLOv5</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="FPS">
-                 <property name="font">
-                  <font>
-                   <pointsize>15</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QTextBrowser" name="detect_result_text"/>
-             </item>
-             <item>
-              <widget class="QLabel" name="origin_image">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
+        </property>
+        <property name="windowTitle">
+            <string>基于深度学习的多标签服饰检测系统</string>
+        </property>
+        <property name="windowIcon">
+            <iconset>
+                <normaloff>icons8-ai-80.png</normaloff>icons8-ai-80.png
+            </iconset>
+        </property>
+        <widget class="QWidget" name="centralwidget">
+            <property name="enabled">
+                <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
                 </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+                <item>
+                    <widget class="QLabel" name="label_5">
+                        <property name="font">
+                            <font>
+                                <family>Adobe Devanagari</family>
+                                <pointsize>14</pointsize>
+                            </font>
+                        </property>
+                        <property name="text">
+                            <string>大数据193姜镗宇</string>
+                        </property>
+                        <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QGroupBox" name="groupBox_2">
+                        <property name="title">
+                            <string>操作区</string>
+                        </property>
+                        <layout class="QVBoxLayout" name="verticalLayout_3">
+                            <item>
+                                <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,4,1">
+                                    <item>
+                                        <widget class="QLabel" name="label_2">
+                                            <property name="sizePolicy">
+                                                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="maximumSize">
+                                                <size>
+                                                    <width>1677215</width>
+                                                    <height>16777215</height>
+                                                </size>
+                                            </property>
+                                            <property name="font">
+                                                <font>
+                                                    <family>Adobe Devanagari</family>
+                                                    <pointsize>11</pointsize>
+                                                </font>
+                                            </property>
+                                            <property name="text">
+                                                <string>功能选择</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                    <item>
+                                        <widget class="QLabel" name="label_3">
+                                            <property name="sizePolicy">
+                                                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="maximumSize">
+                                                <size>
+                                                    <width>1677215</width>
+                                                    <height>16777215</height>
+                                                </size>
+                                            </property>
+                                            <property name="font">
+                                                <font>
+                                                    <family>Adobe Devanagari</family>
+                                                    <pointsize>11</pointsize>
+                                                </font>
+                                            </property>
+                                            <property name="text">
+                                                <string>检测结果</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>Qt::AlignCenter</set>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                    <item>
+                                        <widget class="QLabel" name="label_4">
+                                            <property name="sizePolicy">
+                                                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                                                    <horstretch>0</horstretch>
+                                                    <verstretch>0</verstretch>
+                                                </sizepolicy>
+                                            </property>
+                                            <property name="maximumSize">
+                                                <size>
+                                                    <width>1677215</width>
+                                                    <height>16777215</height>
+                                                </size>
+                                            </property>
+                                            <property name="font">
+                                                <font>
+                                                    <family>Adobe Devanagari</family>
+                                                    <pointsize>11</pointsize>
+                                                </font>
+                                            </property>
+                                            <property name="text">
+                                                <string>检测信息</string>
+                                            </property>
+                                            <property name="alignment">
+                                                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                            </property>
+                                        </widget>
+                                    </item>
+                                </layout>
+                            </item>
+                            <item>
+                                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,11">
+                                    <item>
+                                        <layout class="QVBoxLayout" name="verticalLayout">
+                                            <item>
+                                                <widget class="QRadioButton" name="YOLOv5">
+                                                    <property name="font">
+                                                        <font>
+                                                            <pointsize>15</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>YOLOv5</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QRadioButton" name="YOLOv6">
+                                                    <property name="font">
+                                                        <font>
+                                                            <pointsize>15</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>YOLOv6</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QRadioButton" name="YOLOv8">
+                                                    <property name="font">
+                                                        <font>
+                                                            <pointsize>15</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>YOLOv8</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="detect_image">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="font">
+                                                        <font>
+                                                            <family>Adobe Devanagari</family>
+                                                            <pointsize>10</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>图片检测</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="detect_video">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="font">
+                                                        <font>
+                                                            <family>Adobe Devanagari</family>
+                                                            <pointsize>10</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>视频检测</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QPushButton" name="detect_camer">
+                                                    <property name="sizePolicy">
+                                                        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                                            <horstretch>0</horstretch>
+                                                            <verstretch>0</verstretch>
+                                                        </sizepolicy>
+                                                    </property>
+                                                    <property name="font">
+                                                        <font>
+                                                            <family>Adobe Devanagari</family>
+                                                            <pointsize>10</pointsize>
+                                                        </font>
+                                                    </property>
+                                                    <property name="text">
+                                                        <string>摄像头检测</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                        </layout>
+                                    </item>
+                                    <item>
+                                        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,0">
+                                            <item>
+                                                <widget class="QLabel" name="show_label">
+                                                    <property name="text">
+                                                        <string/>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <layout class="QVBoxLayout" name="verticalLayout_2">
+                                                    <item>
+                                                        <layout class="QHBoxLayout" name="horizontalLayout_6">
+                                                            <item>
+                                                                <widget class="QLabel" name="current_onnx">
+                                                                    <property name="font">
+                                                                        <font>
+                                                                            <pointsize>15</pointsize>
+                                                                        </font>
+                                                                    </property>
+                                                                    <property name="text">
+                                                                        <string>YOLOv5</string>
+                                                                    </property>
+                                                                </widget>
+                                                            </item>
+                                                            <item>
+                                                                <widget class="QLabel" name="FPS">
+                                                                    <property name="font">
+                                                                        <font>
+                                                                            <pointsize>15</pointsize>
+                                                                        </font>
+                                                                    </property>
+                                                                    <property name="text">
+                                                                        <string/>
+                                                                    </property>
+                                                                    <property name="alignment">
+                                                                        <set>
+                                                                            Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter
+                                                                        </set>
+                                                                    </property>
+                                                                </widget>
+                                                            </item>
+                                                        </layout>
+                                                    </item>
+                                                    <item>
+                                                        <widget class="QTextBrowser" name="detect_result_text"/>
+                                                    </item>
+                                                    <item>
+                                                        <widget class="QLabel" name="origin_image">
+                                                            <property name="sizePolicy">
+                                                                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                                                                    <horstretch>0</horstretch>
+                                                                    <verstretch>0</verstretch>
+                                                                </sizepolicy>
+                                                            </property>
+                                                            <property name="text">
+                                                                <string/>
+                                                            </property>
+                                                        </widget>
+                                                    </item>
+                                                </layout>
+                                            </item>
+                                        </layout>
+                                    </item>
+                                </layout>
+                            </item>
+                            <item>
+                                <layout class="QHBoxLayout" name="horizontalLayout">
+                                    <item>
+                                        <layout class="QHBoxLayout" name="horizontalLayout_5">
+                                            <item>
+                                                <layout class="QVBoxLayout" name="verticalLayout_5">
+                                                    <item>
+                                                        <widget class="QPushButton" name="pause_video">
+                                                            <property name="text">
+                                                                <string>暂停/继续</string>
+                                                            </property>
+                                                        </widget>
+                                                    </item>
+                                                    <item>
+                                                        <widget class="QPushButton" name="quit_button">
+                                                            <property name="text">
+                                                                <string>结束检测</string>
+                                                            </property>
+                                                        </widget>
+                                                    </item>
+                                                </layout>
+                                            </item>
+                                        </layout>
+                                    </item>
+                                    <item>
+                                        <layout class="QVBoxLayout" name="verticalLayout_6">
+                                            <item>
+                                                <widget class="QSlider" name="IoU_Slider">
+                                                    <property name="orientation">
+                                                        <enum>Qt::Horizontal</enum>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QSlider" name="Conf_Slider">
+                                                    <property name="orientation">
+                                                        <enum>Qt::Horizontal</enum>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                        </layout>
+                                    </item>
+                                    <item>
+                                        <layout class="QVBoxLayout" name="verticalLayout_7">
+                                            <item>
+                                                <widget class="QLabel" name="IoU_label">
+                                                    <property name="text">
+                                                        <string>IoU</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                            <item>
+                                                <widget class="QLabel" name="Conf_label">
+                                                    <property name="text">
+                                                        <string>Conf</string>
+                                                    </property>
+                                                </widget>
+                                            </item>
+                                        </layout>
+                                    </item>
+                                </layout>
+                            </item>
+                        </layout>
+                    </widget>
+                </item>
             </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5">
-             <item>
-              <widget class="QPushButton" name="pause_video">
-               <property name="text">
-                <string>暂停/继续</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="quit_button">
-               <property name="text">
-                <string>结束检测</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <item>
-            <widget class="QSlider" name="IoU_Slider">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSlider" name="Conf_Slider">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QLabel" name="IoU_label">
-             <property name="text">
-              <string>IoU</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="Conf_label">
-             <property name="text">
-              <string>Conf</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
+        </widget>
+        <widget class="QStatusBar" name="statusbar"/>
+    </widget>
+    <resources/>
+    <connections/>
 </ui>

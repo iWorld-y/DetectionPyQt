@@ -1,3 +1,6 @@
 .idea
 **/*.pyc
 *.jpg
+*.png
+*.mp4
+*.onnx

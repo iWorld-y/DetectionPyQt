@@ -9,9 +9,9 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 
 from MainWindow import *
-from DetectV5 import DetectV5
-from src.V6.DetectV6 import DetectV6
-from src.V8.DetectV8 import DetectV8
+from src.YOLO_ONNX_Detection.DetectV5 import DetectV5
+from src.YOLO_ONNX_Detection.DetectV6 import DetectV6
+from src.YOLO_ONNX_Detection.DetectV8 import DetectV8
 
 
 class Gene_Window(QMainWindow, Ui_MainWindow):
@@ -69,8 +69,6 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         self.main_ui.detect_video.clicked.connect(self.load_video)
         # 暂停摄像头画面
         self.main_ui.pause_video.clicked.connect(self.toggle_pause)
-        # 初始化摄像头
-        # self.video_capture = cv2.VideoCapture(0)
         # 检测摄像头
         self.main_ui.detect_camer.clicked.connect(self.open_camer)
 
@@ -80,30 +78,51 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         self.main_ui.quit_button.clicked.connect(QApplication.quit)
 
     def __init_detect_v5__(self):
+        if (not self.main_ui.YOLOv5.isChecked()):
+            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
+            return
         ONNX_path = "../models/v5.onnx"
         if (os.path.isfile(ONNX_path)):
             self.detector = DetectV5(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
             self.main_ui.current_onnx.setText("YOLOv5")
+            logging.info("当前权重：v5.onnx")
         else:
+            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
+                                          buttons=QtWidgets.QMessageBox.Ok,
+                                          defaultButton=QtWidgets.QMessageBox.Ok)
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 
     def __init_detect_v6__(self):
+        if (not self.main_ui.YOLOv6.isChecked()):
+            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
+            return
         ONNX_path = "../models/v6.onnx"
         if (os.path.isfile(ONNX_path)):
             self.detector = DetectV6(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
             self.main_ui.current_onnx.setText("YOLOv6")
+            logging.info("当前权重：v6.onnx")
         else:
+            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
+                                          buttons=QtWidgets.QMessageBox.Ok,
+                                          defaultButton=QtWidgets.QMessageBox.Ok)
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 
     def __init_detect_v8__(self):
+        if (not self.main_ui.YOLOv8.isChecked()):
+            # 调用前检查自身是否已被选中，避免取消选中时的重复调用
+            return
         ONNX_path = "../models/v8.onnx"
         if (os.path.isfile(ONNX_path)):
             self.detector = DetectV8(onnxruntime.InferenceSession(ONNX_path, providers=['CPUExecutionProvider']),
                                      classes=self.CLASSES)
             self.main_ui.current_onnx.setText("YOLOv8")
+            logging.info("当前权重：v8.onnx")
         else:
+            QtWidgets.QMessageBox.warning(self, "错误", "权重加载失败\n请检查 models 目录",
+                                          buttons=QtWidgets.QMessageBox.Ok,
+                                          defaultButton=QtWidgets.QMessageBox.Ok)
             raise ValueError(f"ONNX model file not found at {ONNX_path}")
 
     def toggle_pause(self):
@@ -114,7 +133,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
 
     def load_video(self):
         self.video_path, _ = QFileDialog.getOpenFileName(self, "打开视频",
-                                                         "/home/eugene/autodl-tmp/test",
+                                                         "../assert",
                                                          "All Files(*)")
         if not self.video_path:
             QtWidgets.QMessageBox.warning(self, "错误", "未选择视频", buttons=QtWidgets.QMessageBox.Ok,
@@ -223,7 +242,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
 
     def detect_image(self):
         self.imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片",
-                                                            "/home/eugene/autodl-tmp/test",
+                                                            "../assert",
                                                             "*.jpg;;*.png;;All Files(*)")
         if (not self.imgName):
             QtWidgets.QMessageBox.warning(self, "错误", "未选择图片", buttons=QtWidgets.QMessageBox.Ok,

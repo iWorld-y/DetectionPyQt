@@ -38,7 +38,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # IoU
         self.main_ui.IoU_label.setText(f"IoU:\t{self.iou:.2f}")
         self.main_ui.IoU_Slider.setMinimum(1)
-        self.main_ui.IoU_Slider.setMaximum(100)
+        self.main_ui.IoU_Slider.setMaximum(99)
         self.main_ui.IoU_Slider.setValue(int(self.iou * 100))
         self.main_ui.IoU_Slider.valueChanged[int].connect(self.set_iou)
 
@@ -132,6 +132,10 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             logging.error(e)
         # 读取视频
         self.video_capture = cv2.VideoCapture(self.video_path)
+        # 读取视频总帧数，后续处理视频播放完毕卡死问题
+        self.total_frames = int(self.video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.current_frame = 0
+
         _, image = self.video_capture.read()
         self.timer = QTimer()
         self.video_name = os.path.basename(self.video_path)
@@ -142,10 +146,16 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
         # 如果处于暂停状态，直接返回
         if self.paused_camer:
             return
-
+        if (self.current_frame >= self.total_frames):
+            # 若当前总帧数大于视频总帧数即播放完毕
+            self.video_capture.release()
+            self.timer.stop()
+            return
         # 获取一帧画面
         # read()：读取视频流中的一帧，返回两个值，第一个值是一个布尔值，表示是否成功读取了一帧；第二个值是一个 NumPy 数组，表示读取的图像数据。
         ret, video_stream = self.video_capture.read()
+        # 避免视频切换照片卡死
+        if (not ret): return
         height, width, channel = video_stream.shape
 
         # 预测画面
@@ -157,6 +167,7 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             # 矫正颜色
             origin_stream = cv2.cvtColor(origin_stream, cv2.COLOR_BGR2RGB)
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
+            self.current_frame += 1
         except Exception as e:
             logging.warning("未发现衣物")
             video_stream = cv2.cvtColor(video_stream, cv2.COLOR_BGR2RGB)
@@ -178,12 +189,12 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
     def open_camer(self):
-        self.main_ui.detect_video.setText(
-            QtCore.QCoreApplication.translate("MainWindow", "视频检测"))
         # 检查当前是否在播放视频
         try:
             if (self.video_capture.isOpened()):
                 self.video_capture.release()
+                self.main_ui.detect_video.setText(
+                    QtCore.QCoreApplication.translate("MainWindow", "视频检测"))
         except Exception as e:
             logging.error(e)
         # 打开摄像头
@@ -201,7 +212,9 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
                                           defaultButton=QtWidgets.QMessageBox.Ok)
             return
         # 读取摄像头画面并将其翻转
-        _, video_stream = self.video_capture.read()
+        ret, video_stream = self.video_capture.read()
+        # 避免视频切换照片卡死
+        if (not ret): return
         video_stream = cv2.flip(video_stream, 1)
 
         height, width, channel = video_stream.shape
@@ -236,6 +249,15 @@ class Gene_Window(QMainWindow, Ui_MainWindow):
             self.main_ui.detect_result_text.append(f"{ret}: {sco:.2f}")
 
     def detect_image(self):
+        # 检查当前是否在播放视频
+        try:
+            if (self.video_capture.isOpened()):
+                self.main_ui.detect_video.setText(
+                    QtCore.QCoreApplication.translate("MainWindow", "视频检测"))
+                self.video_capture.release()
+                self.main_ui.show_label.show()
+        except Exception as e:
+            logging.error(e)
         self.imgName, imgType = QFileDialog.getOpenFileName(self, "打开图片",
                                                             "../assert",
                                                             "*.jpg;;*.png;;All Files(*)")

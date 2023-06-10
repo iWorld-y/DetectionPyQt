@@ -1,14 +1,6 @@
 import numpy as np
 import cv2
 
-class_names = ["short sleeve top", "long sleeve top", "short sleeve outwear", "long sleeve outwear", "vest", "sling",
-               "shorts", "trousers", "skirt", "short sleeve dress", "long sleeve dress", "vest dress",
-               "sling dress"]
-
-# Create a list of colors for each class where each color is a tuple of 3 integer values
-rng = np.random.default_rng(3)
-colors = rng.uniform(0, 255, size=(len(class_names), 3))
-
 
 def nms(boxes, scores, iou_threshold):
     # Sort by score
@@ -19,16 +11,12 @@ def nms(boxes, scores, iou_threshold):
         # Pick the last box
         box_id = sorted_indices[0]
         keep_boxes.append(box_id)
-
         # Compute IoU of the picked box with the rest
         ious = compute_iou(boxes[box_id, :], boxes[sorted_indices[1:], :])
-
         # Remove boxes with IoU over the threshold
         keep_indices = np.where(ious < iou_threshold)[0]
-
         # print(keep_indices.shape, sorted_indices.shape)
         sorted_indices = sorted_indices[keep_indices + 1]
-
     return keep_boxes
 
 
@@ -63,7 +51,7 @@ def xywh2xyxy(x):
     return y
 
 
-def draw_detections(image, boxes, scores, class_ids):
+def draw_detections(image, boxes, scores, class_ids, colors, class_names):
     det_img = image.copy()
 
     img_height, img_width = image.shape[:2]

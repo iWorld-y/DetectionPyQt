@@ -15,6 +15,9 @@ class DetectV6:
         self.result = []
         # 检出物数置信度
         self.score = []
+        # 类别颜色框
+        rng = np.random.default_rng(3)
+        self.colors = rng.uniform(0, 255, size=(len(self.classes), 3))
         # Get model info
         self.get_input_details()
         self.get_output_details()
@@ -23,10 +26,10 @@ class DetectV6:
         input_tensor = self.prepare_input(image)
 
         # Perform __inference__ on the image
-        output = self.__inference__(input_tensor)
+        outputs = self.__inference__(input_tensor)
 
         # Process output data
-        self.boxes, self.scores, self.class_ids = self.process_output(output)
+        self.boxes, self.scores, self.class_ids = self.process_output(outputs)
 
         return self.boxes, self.scores, self.class_ids
 
@@ -102,7 +105,7 @@ class DetectV6:
             self.result.append(self.classes[ret])
             self.score.append(sco)
         return draw_detections(image, self.boxes, self.scores,
-                               self.class_ids)
+                               self.class_ids, self.colors, self.classes)
 
     def get_input_details(self):
         model_inputs = self.onnx_session.get_inputs()

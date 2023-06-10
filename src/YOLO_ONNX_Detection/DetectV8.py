@@ -7,12 +7,6 @@ from .utils import xywh2xyxy, nms, draw_detections
 
 
 class DetectV8:
-    # def __init__(self, path, conf_thres=0.7, iou_thres=0.5):
-    #     self.conf_threshold = conf_thres
-    #     self.iou_threshold = iou_thres
-    #
-    #     # Initialize model
-    #     self.initialize_model(path)
     def __init__(self, onnx_session, classes):
         self.onnx_session: onnxruntime.InferenceSession = onnx_session
         self.classes = classes
@@ -20,6 +14,9 @@ class DetectV8:
         self.result = []
         # 检出物数置信度
         self.score = []
+        # 类别颜色框
+        rng = np.random.default_rng(3)
+        self.colors = rng.uniform(0, 255, size=(len(self.classes), 3))
         # Get model info
         self.get_input_details()
         self.get_output_details()
@@ -27,9 +24,10 @@ class DetectV8:
     def detect_objects(self, image):
         input_tensor = self.prepare_input(image)
 
-        # Perform inference on the image
+        # Perform __inference__ on the image
         outputs = self.__inference__(input_tensor)
 
+        # Process output data
         self.boxes, self.scores, self.class_ids = self.process_output(outputs)
 
         return self.boxes, self.scores, self.class_ids
@@ -94,9 +92,6 @@ class DetectV8:
         boxes *= np.array([self.img_width, self.img_height, self.img_width, self.img_height])
         return boxes
 
-    # def draw_detections(self, image, draw_scores=True, mask_alpha=0.4):
-    #     return draw_detections(image, self.boxes, self.scores,
-    #                            self.class_ids, mask_alpha)
     def inference(self, image, conf_thres=0.5, iou_thres=0.5):
         self.conf_threshold = conf_thres
         self.iou_threshold = iou_thres
@@ -108,7 +103,7 @@ class DetectV8:
             self.result.append(self.classes[ret])
             self.score.append(sco)
         return draw_detections(image, self.boxes, self.scores,
-                               self.class_ids)
+                               self.class_ids, self.colors[::-1], self.classes)
 
     def get_input_details(self):
         model_inputs = self.onnx_session.get_inputs()
